@@ -11,7 +11,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: any) => {
     file.mimetype === "image/png" ||
     file.mimetype === "image/jpg"
   ) {
-    cb(null, true);
+    cb(undefined, true);
   } else {
     cb(new HttpException(400, "Unsupported file format"), false);
   }
