@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Router, Response } from "express";
 
 import userValidation from "../middlewares/validations/userValidation";
 import userController from "../controllers/user.controller";
@@ -123,7 +123,7 @@ export default class UserRoutes {
     );
 
     this.router.get("/loggedIn", userController.loggedIn);
-    this.router.get("/csrf-token", (req, res) => {
+    this.router.get("/csrf-token", (req: Request, res: Response) => {
       return res.json({ csrfToken: req.csrfToken() });
     });
   }
