@@ -112,7 +112,7 @@ export default class UserRoutes {
       upload.single("avatar"),
       userController.uploadAvatar
     );
-    this.router.delete(
+    this.router.post(
       "/deleteUser",
       authenticate,
       permit(["SUBSCRIBER", "ADMIN"]),
