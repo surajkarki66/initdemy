@@ -2,12 +2,13 @@ import { useState, useEffect, useContext } from "react";
 import { NextPage } from "next";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { Collapse, Form, notification, Spin } from "antd";
+import { Collapse, Form, notification } from "antd";
 
 import Axios from "../../axios-url";
 import { AuthContext } from "../../context/AuthContext";
 import ChangePasswordForm from "../../components/forms/ChangePasswordForm";
 import ChangeEmailForm from "../../components/forms/ChangeEmailForm";
+import DeleteForm from "../../components/forms/DeleteForm";
 import UserRoute from "../../components/routes/UserRoute";
 
 const AccountSettings: NextPage = () => {
@@ -19,6 +20,7 @@ const AccountSettings: NextPage = () => {
   const [successEmailChange, setSuccessEmailChange] = useState(false);
   const [changeEmailForm] = Form.useForm();
   const [changePassError, setChangePassError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
   const [successPassChange, setSuccessPassChange] = useState(false);
   const [changePassForm] = Form.useForm();
   const { csrfToken, accessToken, state, dispatch, getTokens } =
@@ -43,10 +45,10 @@ const AccountSettings: NextPage = () => {
     toast(data.data);
     router.push("/login");
   };
-  const onFinishEmailChange = (values: any) => {
+  const onFinishEmailChange = async (values: any) => {
     if (values) {
       const { email } = values;
-      changeEmail(email, state?.user?.id, accessToken);
+      await changeEmail(email, state?.user?.id, accessToken);
     }
   };
 
@@ -113,6 +115,31 @@ const AccountSettings: NextPage = () => {
       setChangeEmailError(data.data.error);
     }
   };
+  const deleteAccount = async (
+    password: string,
+    userId: string,
+    token?: string
+  ) => {
+    try {
+      setLoading(true);
+      Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
+      const { data } = await Axios.post(
+        "/user/deleteUser",
+        { userId, password },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setLoading(false);
+      setDeleteError("");
+      router.push("/");
+      await logout();
+    } catch (error: any) {
+      const { data } = error.response;
+      setLoading(false);
+      setDeleteError(data.data.error);
+    }
+  };
   const onFinishPassChange = async (values: any) => {
     if (values) {
       const { oldPassword, newPassword, loggedIn } = values;
@@ -123,6 +150,12 @@ const AccountSettings: NextPage = () => {
         loggedIn,
         accessToken
       );
+    }
+  };
+  const onFinishDelete = async (values: any) => {
+    if (values) {
+      const { password } = values;
+      await deleteAccount(password, state?.user?.id, accessToken);
     }
   };
   return (
@@ -157,11 +190,11 @@ const AccountSettings: NextPage = () => {
               />
             </Panel>
             <Panel header="Delete Account" key="3">
-              {/* <DeleteForm
+              <DeleteForm
                 loading={loading}
                 deleteError={deleteError}
                 onFinish={onFinishDelete}
-              /> */}
+              />
             </Panel>
           </Collapse>
         </div>
