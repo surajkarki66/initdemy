@@ -1,6 +1,9 @@
 .square {
   border-radius: 0px;
 }
+a {
+  text-decoration: none;
+}
 
 .jumbotron {
   background-image: linear-gradient(to right, #007bff, #000);
@@ -10,6 +13,9 @@
 .profileContainer {
   display: flex;
   margin: 20px;
+}
+.nav-link {
+  color: black;
 }
 @media only screen and (max-width: 768px) {
   .profileContainer {
