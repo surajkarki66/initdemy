@@ -8,7 +8,6 @@ import {
   useState,
   useCallback,
 } from "react";
-import { useRouter } from "next/router";
 
 import Axios from "../axios-url";
 import { AuthContextType, User } from "../types/types";
@@ -42,7 +41,6 @@ const AuthContextProvider: FC<Props> = (props) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
   const [csrfToken, setCsrfToken] = useState("");
   const [accessToken, setAccessToken] = useState(Cookie.get("accessToken"));
-  const router = useRouter();
 
   const getTokens = useCallback(async () => {
     const csrfResponse = await Axios.get("/user/csrf-token");
@@ -58,29 +56,6 @@ const AuthContextProvider: FC<Props> = (props) => {
   useEffect(() => {
     getTokens();
   }, [getTokens]);
-
-  Axios.interceptors.response.use(
-    function (response) {
-      return response;
-    },
-    function (error) {
-      const res = error.response;
-      if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
-        return new Promise((_resolve, reject) => {
-          Axios.get("/user/logout")
-            .then((_data) => {
-              dispatch({ type: "LOGOUT" });
-              window.localStorage.removeItem("user");
-              router.push("/login");
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
-      }
-      return Promise.reject(error);
-    }
-  );
 
   return (
     <AuthContext.Provider
