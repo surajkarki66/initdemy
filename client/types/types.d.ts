@@ -22,6 +22,7 @@ export type AuthContextType = {
     type: any;
     payload?: any;
   }>;
+  getTokens:  () => Promise<void>
 };
 
 export type TokenPayload = {
