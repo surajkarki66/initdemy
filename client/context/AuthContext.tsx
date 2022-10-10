@@ -59,7 +59,14 @@ const AuthContextProvider: FC<Props> = (props) => {
 
   return (
     <AuthContext.Provider
-      value={{ state, dispatch, csrfToken, accessToken, setAccessToken }}
+      value={{
+        state,
+        dispatch,
+        csrfToken,
+        accessToken,
+        setAccessToken,
+        getTokens,
+      }}
     >
       {props.children}
     </AuthContext.Provider>
