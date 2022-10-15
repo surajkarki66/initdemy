@@ -9,6 +9,7 @@ import { AuthContext } from "../../context/AuthContext";
 import ChangePasswordForm from "../../components/forms/ChangePasswordForm";
 import ChangeEmailForm from "../../components/forms/ChangeEmailForm";
 import DeleteForm from "../../components/forms/DeleteForm";
+import ChangeNameForm from "../../components/forms/ChangeNameForm";
 import UserRoute from "../../components/routes/UserRoute";
 
 const AccountSettings: NextPage = () => {
@@ -22,7 +23,10 @@ const AccountSettings: NextPage = () => {
   const [changePassError, setChangePassError] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [successPassChange, setSuccessPassChange] = useState(false);
+  const [successNameChange, setSuccessNameChange] = useState(false);
+  const [changeNameError, setChangeNameError] = useState("");
   const [changePassForm] = Form.useForm();
+  const [changeNameForm] = Form.useForm();
   const { csrfToken, accessToken, state, dispatch, getTokens } =
     useContext(AuthContext);
 
@@ -35,7 +39,12 @@ const AccountSettings: NextPage = () => {
         message: "Email is changed successfully and confirmation email is sent",
       });
     }
-  }, [successPassChange, successEmailChange]);
+    if (successNameChange) {
+      notification.info({
+        message: "Full Name is changed successfully",
+      });
+    }
+  }, [successPassChange, successEmailChange, successNameChange]);
 
   const logout = async () => {
     dispatch({ type: "LOGOUT" });
@@ -51,7 +60,44 @@ const AccountSettings: NextPage = () => {
       await changeEmail(email, state?.user?.id, accessToken);
     }
   };
-
+  const changeEmail = async (email: string, userId: string, token?: string) => {
+    try {
+      setLoading(true);
+      Axios.defaults.headers.patch["X-CSRF-Token"] = csrfToken;
+      await Axios.patch(
+        "/user/changeEmail",
+        {
+          email,
+          userId,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setLoading(false);
+      setChangeEmailError("");
+      setSuccessEmailChange(true);
+      changeEmailForm.resetFields();
+      await getTokens();
+    } catch (error: any) {
+      const { data } = error.response;
+      setLoading(false);
+      setSuccessEmailChange(false);
+      setChangeEmailError(data.data.error);
+    }
+  };
+  const onFinishPassChange = async (values: any) => {
+    if (values) {
+      const { oldPassword, newPassword, loggedIn } = values;
+      await changePassword(
+        state?.user?.id,
+        oldPassword,
+        newPassword,
+        loggedIn,
+        accessToken
+      );
+    }
+  };
   const changePassword = async (
     userId: string,
     oldPassword: string,
@@ -62,7 +108,7 @@ const AccountSettings: NextPage = () => {
     try {
       setLoading(true);
       Axios.defaults.headers.patch["X-CSRF-Token"] = csrfToken;
-      const { data } = await Axios.patch(
+      await Axios.patch(
         "/user/changePassword",
         {
           userId,
@@ -88,31 +134,10 @@ const AccountSettings: NextPage = () => {
       setChangePassError(data.data.error);
     }
   };
-
-  const changeEmail = async (email: string, userId: string, token?: string) => {
-    try {
-      setLoading(true);
-      Axios.defaults.headers.patch["X-CSRF-Token"] = csrfToken;
-      const { data } = await Axios.patch(
-        "/user/changeEmail",
-        {
-          email,
-          userId,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setLoading(false);
-      setChangeEmailError("");
-      setSuccessEmailChange(true);
-      changeEmailForm.resetFields();
-      await getTokens();
-    } catch (error: any) {
-      const { data } = error.response;
-      setLoading(false);
-      setSuccessEmailChange(false);
-      setChangeEmailError(data.data.error);
+  const onFinishDelete = async (values: any) => {
+    if (values) {
+      const { password } = values;
+      await deleteAccount(password, state?.user?.id, accessToken);
     }
   };
   const deleteAccount = async (
@@ -123,7 +148,7 @@ const AccountSettings: NextPage = () => {
     try {
       setLoading(true);
       Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
-      const { data } = await Axios.post(
+      await Axios.post(
         "/user/deleteUser",
         { userId, password },
         {
@@ -140,24 +165,43 @@ const AccountSettings: NextPage = () => {
       setDeleteError(data.data.error);
     }
   };
-  const onFinishPassChange = async (values: any) => {
+  const onFinishNameChange = async (values: any) => {
     if (values) {
-      const { oldPassword, newPassword, loggedIn } = values;
-      await changePassword(
-        state?.user?.id,
-        oldPassword,
-        newPassword,
-        loggedIn,
-        accessToken
+      const { firstName, lastName } = values;
+      await changeName(state?.user?.id, firstName, lastName, accessToken);
+    }
+  };
+  const changeName = async (
+    userId: string,
+    firstName: string,
+    lastName: string,
+    accessToken?: string
+  ) => {
+    try {
+      setLoading(true);
+      Axios.defaults.headers.patch["X-CSRF-Token"] = csrfToken;
+      await Axios.patch(
+        `/user/changeUserDetails/${userId}`,
+        {
+          firstName,
+          lastName,
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
       );
+      setLoading(false);
+      setChangeNameError("");
+      setSuccessNameChange(true);
+      changeNameForm.resetFields();
+    } catch (error: any) {
+      const { data } = error.response;
+      setLoading(false);
+      setSuccessNameChange(false);
+      setChangeNameError(data.data.error);
     }
   };
-  const onFinishDelete = async (values: any) => {
-    if (values) {
-      const { password } = values;
-      await deleteAccount(password, state?.user?.id, accessToken);
-    }
-  };
+
   return (
     <>
       <UserRoute>
@@ -173,7 +217,15 @@ const AccountSettings: NextPage = () => {
               setPanelKey(key);
             }}
           >
-            <Panel header="Change Password" key="1">
+            <Panel header="Change Name" key="1">
+              <ChangeNameForm
+                form={changeNameForm}
+                loading={loading}
+                changeError={changeNameError}
+                onFinish={onFinishNameChange}
+              />
+            </Panel>
+            <Panel header="Change Password" key="2">
               <ChangePasswordForm
                 form={changePassForm}
                 loading={loading}
@@ -181,7 +233,7 @@ const AccountSettings: NextPage = () => {
                 onFinish={onFinishPassChange}
               />
             </Panel>
-            <Panel header="Change Email" key="2">
+            <Panel header="Change Email" key="3">
               <ChangeEmailForm
                 form={changeEmailForm}
                 loading={loading}
@@ -189,7 +241,7 @@ const AccountSettings: NextPage = () => {
                 onFinish={onFinishEmailChange}
               />
             </Panel>
-            <Panel header="Delete Account" key="3">
+            <Panel header="Delete Account" key="4">
               <DeleteForm
                 loading={loading}
                 deleteError={deleteError}
