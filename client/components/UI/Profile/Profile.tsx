@@ -29,16 +29,14 @@ const Profile: React.FC<ProfileProps> = ({
             Email: <b>{user.email}</b>{" "}
           </h6>
           <h6>
-            User Type:<b>{user.isActive ? "Active" : "Not Active"}</b>{" "}
+            Account: <b>{user.isActive ? "active" : "not active"}</b>{" "}
           </h6>
           <h6>
-            Role:<b>{user.role}</b>{" "}
+            Role: <b style={{ textTransform: "lowercase" }}>{user.role}</b>{" "}
           </h6>
           <h6>
             Joined:
-            <b>
-              {moment(user.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
-            </b>{" "}
+            <b>{moment(user.createdAt).format("MMMM Do YYYY, h:mm a")}</b>{" "}
           </h6>
 
           {!user.isActive && (
