@@ -34,7 +34,6 @@ const Login: NextPage = () => {
       if (data) {
         const { user, accessToken } = data.data;
         dispatch({ type: "LOGIN", payload: user });
-        window.localStorage.setItem("user", JSON.stringify(user));
         setAccessToken(accessToken);
         setLoading(false);
         router.push("/");
