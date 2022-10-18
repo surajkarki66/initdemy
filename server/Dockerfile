@@ -18,13 +18,17 @@ RUN npm run build
 FROM node:16-alpine as production
 RUN npm install -g pnpm
 
+
+RUN addgroup -g 1001 -S user_group
+RUN adduser -S application -u 1001
+
 WORKDIR /app
 
-COPY --from=build /app/.env.docker ./.env
-COPY --from=build /app/package.json .
-COPY --from=build /app/pnpm-lock.yaml .
-COPY --from=build /app/prisma ./prisma
-COPY --from=build /app/node_modules/ ./node_modules/
-COPY --from=build /app/dist/ ./dist/
+COPY --from=build --chown=application:user_group /app/.env.docker ./.env
+COPY --from=build --chown=application:user_group /app/package.json .
+COPY --from=build --chown=application:user_group /app/pnpm-lock.yaml .
+COPY --from=build --chown=application:user_group /app/prisma ./prisma
+COPY --from=build --chown=application:user_group /app/node_modules/ ./node_modules/
+COPY --from=build --chown=application:user_group /app/dist/ ./dist/
 
 CMD ["/bin/sh", "-c", "npm run p-mg-prod;node dist/app.js"]
