@@ -1,89 +1,197 @@
 # initdemy-authentication-PENN-Stack
 
-## Get Started
-
 This is a boilerplate of authentication system for initdemy which is a online education marketplace which is built using Express.js in backend and Next.js in frontend.
 
-## First steps
+---
 
-- Make sure to have TSLint installed and set as default formatter
-- Run `yarn install` or `npm i` inside the server folder before starting the server.
-- create .env file. See example below.
+## Table of Contents
 
-```
-NODE_ENV=development
-CLIENT_URL=http://localhost:3000
-HOST=localhost
-PORT=5000
+1. [Installation](#1-installation)
 
-JWT_SECRET=<make-your-own-token>
-JWT_EXPIRES=<token-expiration-time>
-JWT_EXPIRES_IN_MILSEC=<token-expiration-time-in-milsec>
-JWT_EXPIRES_FOR_EMAIL_ACTIVATION=<token-expiration-time>
-JWT_SECRET_FOR_EMAIL_ACTIVATION=<make-your-own-token>
-JWT_SECRET_FOR_FORGOT_PASSWORD=<make-your-own-token>
-JWT_EXPIRES_FOR_FORGOT_PASSWORD=<token-expiration-time>
+---
 
-MAILGUN_DOMAIN=<Add-mailgun-domain>
-MAILGUN_PRIVATE_API_KEY=<Add-mailgun-private-apikey>
-EMAIL=<email>
+### 1. Installation
 
-CLOUDINARY_CLOUD_NAME=<Add-cloudinary-name>
-CLOUDINARY_API_KEY=<Add-cloudinary-api-key>
-CLOUDINARY_API_SECRET=<Add-cloudinary-api-secret>
+### A) Locally
 
-DATABASE_URL="postgresql://<username>:<password>@<host>:<port>/initdemy?schema=public"
+1. Clone the repo
 
+#### i. Client
+
+2. Open terminal or command prompt in project root directory and change directory to client directory
+
+```bash
+   cd client
 ```
 
-## Running the server
+3. Install all the dependencies.
 
-- to run the development server, do `yarn run dev` or `npm run dev`
-- to run the production server, do `yarn run build` or `npm run build` and `yarn start` or `npm start`
+```bash
+   npm install
+```
 
-## Setting up and running the database
+4. Build the nextjs project.
+
+```bash
+   npm run build
+```
+
+5. Run the project
+
+```bash
+   npm start
+```
+
+Client side of the app is running on development mode on [http://localhost:3000](http://localhost:3000)
+
+#### ii. Server
+
+6. Open terminal or command prompt in project root directory and change directory to server directory
+
+```bash
+   cd server
+```
+
+7. Install pnpm package in your local computer
+
+```bash
+   npm install -g pnpm
+```
+
+8. Install all the dependencies.
+
+```bash
+   pnpm install
+```
+
+9. create .env file in current directory. See example below.
+
+```
+   NODE_ENV=development
+   CLIENT_URL=http://localhost:3000
+   HOST=localhost
+   PORT=5000
+
+   JWT_SECRET=<Enter strong jwt secret string>
+   JWT_EXPIRES=7d
+   JWT_EXPIRES_IN_MILSEC=60480000
+   JWT_EXPIRES_FOR_EMAIL_ACTIVATION=1h
+   JWT_SECRET_FOR_EMAIL_ACTIVATION=<Enter strong jwt secret string>
+   JWT_SECRET_FOR_FORGOT_PASSWORD=<Enter strong jwt secret string>
+   JWT_EXPIRES_FOR_FORGOT_PASSWORD=1h
+
+   MAILGUN_DOMAIN=<Enter your mailgun domain here>
+   MAILGUN_PRIVATE_API_KEY=<Enter your mailgun private api key here>
+   EMAIL=<Enter your mailgun registerd email for sending mail>
+
+   CLOUDINARY_CLOUD_NAME=<Enter your cloudinary cloud name>
+   CLOUDINARY_API_KEY=<Enter your cloudinary api key>
+   CLOUDINARY_API_SECRET=<Enter your cloudinary api secret key>
+
+   DATABASE_URL="postgresql://postgres:postgres@localhost/initdemy?schema=public"
+```
+
+10. Setting up and running the database
 
 - Make sure you have postgresql installed locally
 - Run `psql postgres` to start psql CLI and create database by running `create database initdemy;` and exit cli with `quit`
-- Run `Runs seed scripts
-  Runs seed scripts
-- Run `npx prisma generate` or `yarn prisma generate` from the server folder to establish link between schema.prisma and .env file
-- Run `npx prisma db push` or `yarn prisma db push` to create a new migrate (to sync database schema to prisma schema)
+- Run `npm run p-mg` for database migration
 
-## Viewing the database data and tables
+11. Running the server
 
-- Run `npx prisma studio` or `yarn prisma studio` to visualize the database and open localhost:5555 in the browser
+- to run the development server, do `npm run dev`
+- to run the production server, do `npm run build` and `yarn start` or `npm start`
 
-## Updating schema / models
+Server side of the app is running on development mode on [http://localhost:5000](http://localhost:5000)
 
-- Make changes
-- Run `npx prisma migrate deploy` or `yarn prisma migrate deploy`
+### B) Using Docker
 
-## Common errors with prisma studio
+1. Clone the repo
+2. Install [docker](https://docs.docker.com/get-docker/)
 
-1. Database 'initdemy' does not exist:
+#### i. Server
 
-- Create database with `create database initdemy;` in PSQL CLI
-- Run `npx prisma studio` or `yarn prisma studio` from server folder.
+3. Open terminal or command prompt in project root directory and change directory to server directory
 
-2. Table "user" does not exist in DB
-
-- Run `npx prisma generate` or `yarn prisma generate`
-- Run `npx prisma db push` or `yarn prisma db push`
-
-## Start the client. From the client folder, run
-
-## Steps
-
-- Make sure to have ESLint installed and set as default formatter
-- Run `yarn install ` or `npm i` inside the client folder before starting the server.
-- create .env.local file. See example below.
-
-```
-NEXT_PUBLIC_API=http://localhost:5000/api
-
+```bash
+   cd server
 ```
 
-## Running the server
+3. create .env file in current directory. See example below.
 
-- to run the development server, do `yarn run dev` or `npm run dev`
+```
+   NODE_ENV=development
+   CLIENT_URL=http://localhost:3000
+   HOST=localhost
+   PORT=5000
+
+   JWT_SECRET=<Enter strong jwt secret string>
+   JWT_EXPIRES=7d
+   JWT_EXPIRES_IN_MILSEC=60480000
+   JWT_EXPIRES_FOR_EMAIL_ACTIVATION=1h
+   JWT_SECRET_FOR_EMAIL_ACTIVATION=<Enter strong jwt secret string>
+   JWT_SECRET_FOR_FORGOT_PASSWORD=<Enter strong jwt secret string>
+   JWT_EXPIRES_FOR_FORGOT_PASSWORD=1h
+
+   MAILGUN_DOMAIN=<Enter your mailgun domain here>
+   MAILGUN_PRIVATE_API_KEY=<Enter your mailgun private api key here>
+   EMAIL=<Enter your mailgun registerd email for sending mail>
+
+   CLOUDINARY_CLOUD_NAME=<Enter your cloudinary cloud name>
+   CLOUDINARY_API_KEY=<Enter your cloudinary api key>
+   CLOUDINARY_API_SECRET=<Enter your cloudinary api secret key>
+
+   DATABASE_URL="postgresql://postgres:postgres@localhost/initdemy?schema=public"
+
+```
+
+4. create .env.docker file in current directory. See example below.
+
+```
+   NODE_ENV=development
+   CLIENT_URL=http://localhost:3000
+   HOST=localhost
+   PORT=5000
+
+   JWT_SECRET=<Enter strong jwt secret string>
+   JWT_EXPIRES=7d
+   JWT_EXPIRES_IN_MILSEC=60480000
+   JWT_EXPIRES_FOR_EMAIL_ACTIVATION=1h
+   JWT_SECRET_FOR_EMAIL_ACTIVATION=<Enter strong jwt secret string>
+   JWT_SECRET_FOR_FORGOT_PASSWORD=<Enter strong jwt secret string>
+   JWT_EXPIRES_FOR_FORGOT_PASSWORD=1h
+
+   MAILGUN_DOMAIN=<Enter your mailgun domain here>
+   MAILGUN_PRIVATE_API_KEY=<Enter your mailgun private api key here>
+   EMAIL=<Enter your mailgun registerd email for sending mail>
+
+   CLOUDINARY_CLOUD_NAME=<Enter your cloudinary cloud name>
+   CLOUDINARY_API_KEY=<Enter your cloudinary api key>
+   CLOUDINARY_API_SECRET=<Enter your cloudinary api secret key>
+
+   DATABASE_URL="postgresql://initdemyUser:password123@postgres/initdemy?schema=public"
+```
+
+5. Run the command
+
+```bash
+   docker compose up -d
+```
+
+Server side of the app is running on development mode on [http://localhost:5000](http://localhost:5000)
+
+#### ii. Client
+
+7. Open terminal or command prompt in project root directory and change directory to client directory
+
+```bash
+   cd client
+```
+
+8. Run the command
+
+```bash
+   docker compose up -d
+```
+
+Client side of the app is running on development mode on [http://localhost:3000](http://localhost:3000)
