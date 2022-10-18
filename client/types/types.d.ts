@@ -23,6 +23,10 @@ export type AuthContextType = {
     payload?: any;
   }>;
   getTokens:  () => Promise<void>
+  loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>
+  fullName: string;
+  setFullName: Dispatch<SetStateAction<string>>
 };
 
 export type TokenPayload = {
@@ -34,7 +38,7 @@ export type TokenPayload = {
 };
 
 export type ProfileProps = {
-  user: User;
+  user?: User;
   avatar: string;
   setAvatar: Dispatch<SetStateAction<string>>;
   loading: boolean;
@@ -43,6 +47,6 @@ export type ProfileProps = {
 };
 
 export type ProfilePicProps = {
-  user: User;
+  user?: User;
   avatar: string;
 };

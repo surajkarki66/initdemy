@@ -33,7 +33,6 @@ const Activate: NextPage = () => {
       toast(data.data.message);
       if (user) {
         dispatch({ type: "LOGIN", payload: data.data.user });
-        window.localStorage.setItem("user", JSON.stringify(data.data.user));
       }
       setValidUrl(true);
       setLoading(false);

@@ -10,7 +10,7 @@ const ProfilePic: React.FC<ProfilePicProps> = ({ user, avatar }) => {
         shape="square"
         size={160}
         src={avatar}
-        alt={user.firstName + " " + user.lastName}
+        alt={user?.firstName + " " + user?.lastName}
       />
     </>
   );

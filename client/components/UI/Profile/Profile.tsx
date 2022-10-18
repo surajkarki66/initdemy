@@ -20,26 +20,26 @@ const Profile: React.FC<ProfileProps> = ({
       <Row className="profileContainer">
         <Col md={6} style={{ marginLeft: "5%" }}>
           <h6>
-            First Name: <b>{user.firstName}</b>{" "}
+            First Name: <b>{user?.firstName}</b>{" "}
           </h6>
           <h6>
-            Last Name: <b>{user.lastName}</b>{" "}
+            Last Name: <b>{user?.lastName}</b>{" "}
           </h6>
           <h6>
-            Email: <b>{user.email}</b>{" "}
+            Email: <b>{user?.email}</b>{" "}
           </h6>
           <h6>
-            Account: <b>{user.isActive ? "active" : "not active"}</b>{" "}
+            Account: <b>{user?.isActive ? "active" : "not active"}</b>{" "}
           </h6>
           <h6>
-            Role: <b style={{ textTransform: "lowercase" }}>{user.role}</b>{" "}
+            Role: <b style={{ textTransform: "lowercase" }}>{user?.role}</b>{" "}
           </h6>
           <h6>
             Joined:
-            <b>{moment(user.createdAt).format("MMMM Do YYYY, h:mm a")}</b>{" "}
+            <b>{moment(user?.createdAt).format("MMMM Do YYYY, h:mm a")}</b>{" "}
           </h6>
 
-          {!user.isActive && (
+          {!user?.isActive && (
             <div style={{ fontStyle: "italic", marginTop: "30px" }}>
               <h6>Account is not activated yet</h6>
               <Button

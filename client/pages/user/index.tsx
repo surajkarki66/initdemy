@@ -1,30 +1,29 @@
-import type { NextPage, GetServerSideProps } from "next";
-import { SyntheticEvent, useContext, useState } from "react";
+import type { NextPage } from "next";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
 
 import Axios from "../../axios-url";
 import Profile from "../../components/UI/Profile/Profile";
 import UserRoute from "../../components/routes/UserRoute";
-import { User } from "../../types/types";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+import { User } from "../../types/types";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const token = context.req.cookies.accessToken;
-  const { data } = await Axios.get("/user/me", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return {
-    props: data.data,
-  };
-};
-const UserIndex: NextPage<User> = (props) => {
+const UserIndex: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [disableBtn, setDisableBtn] = useState(false);
-  const [avatar, setAvatar] = useState(props.avatar);
-
+  const [userProps, setUserProps] = useState<User>();
+  const [avatar, setAvatar] = useState("");
   const { state, csrfToken, accessToken } = useContext(AuthContext);
   const { user } = state;
+  useEffect(() => {
+    Axios.get("/user/me", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }).then((res) => {
+      const { data } = res.data;
+      setUserProps(data);
+      setAvatar(data.avatar);
+    });
+  }, [accessToken]);
 
   const activate = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -58,7 +57,7 @@ const UserIndex: NextPage<User> = (props) => {
         </div>
         <div>
           <Profile
-            user={props}
+            user={userProps}
             avatar={avatar}
             setAvatar={setAvatar}
             loading={loading}

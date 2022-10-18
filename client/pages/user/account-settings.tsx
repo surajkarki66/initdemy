@@ -27,7 +27,7 @@ const AccountSettings: NextPage = () => {
   const [changeNameError, setChangeNameError] = useState("");
   const [changePassForm] = Form.useForm();
   const [changeNameForm] = Form.useForm();
-  const { csrfToken, accessToken, state, dispatch, getTokens } =
+  const { csrfToken, accessToken, state, dispatch, getTokens, setFullName } =
     useContext(AuthContext);
 
   useEffect(() => {
@@ -48,7 +48,6 @@ const AccountSettings: NextPage = () => {
 
   const logout = async () => {
     dispatch({ type: "LOGOUT" });
-    window.localStorage.removeItem("user");
     Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
     const { data } = await Axios.get("/user/logout");
     toast(data.data);
@@ -193,6 +192,7 @@ const AccountSettings: NextPage = () => {
       setLoading(false);
       setChangeNameError("");
       setSuccessNameChange(true);
+      setFullName(firstName + " " + lastName);
       changeNameForm.resetFields();
     } catch (error: any) {
       const { data } = error.response;
