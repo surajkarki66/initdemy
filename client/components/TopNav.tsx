@@ -12,10 +12,9 @@ import { AuthContext } from "../context/AuthContext";
 
 const TopNav: React.FC = () => {
   const [current, setCurrent] = useState("");
-  const { state } = useContext(AuthContext);
+  const { state, loading, fullName } = useContext(AuthContext);
   const { Item } = Menu;
   const { user } = state;
-
   useEffect(() => {
     process.browser && setCurrent(window.location.pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -33,7 +32,7 @@ const TopNav: React.FC = () => {
         </Link>
       </Item>
 
-      {user === null && (
+      {user === null && !loading && (
         <>
           <Item
             onClick={(e) => setCurrent(e.key)}
@@ -55,9 +54,9 @@ const TopNav: React.FC = () => {
           </Item>
         </>
       )}
-      {user !== null && (
+      {user !== null && !loading && (
         <Item key="/me" icon={<CoffeeOutlined />}>
-          <Link href="/user">{user && user.firstName + " " + user.lastName}</Link>
+          <Link href="/user">{fullName}</Link>
         </Item>
       )}
     </Menu>
