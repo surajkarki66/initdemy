@@ -40,17 +40,28 @@ const rootReducer = (
 const AuthContextProvider: FC<Props> = (props) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
   const [csrfToken, setCsrfToken] = useState("");
+  const [loading, setLoading] = useState(true);
   const [accessToken, setAccessToken] = useState(Cookie.get("accessToken"));
+  const [fullName, setFullName] = useState("");
 
   const getTokens = useCallback(async () => {
-    const csrfResponse = await Axios.get("/user/csrf-token");
-    setCsrfToken(csrfResponse.data.csrfToken);
-    dispatch({
-      type: "LOGIN",
-      payload: JSON.parse(String(localStorage.getItem("user"))),
-    });
-    const { data } = await Axios.get("/user/loggedIn");
-    setAccessToken(data);
+    try {
+      const csrfResponse = await Axios.get("/user/csrf-token");
+      setCsrfToken(csrfResponse.data.csrfToken);
+      const res = await Axios.get("/user/me", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      dispatch({
+        type: "LOGIN",
+        payload: res?.data?.data,
+      });
+      setFullName(res.data.data.firstName + " " + res.data.data.lastName);
+      const { data } = await Axios.get("/user/loggedIn");
+      setAccessToken(data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -66,6 +77,10 @@ const AuthContextProvider: FC<Props> = (props) => {
         accessToken,
         setAccessToken,
         getTokens,
+        loading,
+        setLoading,
+        fullName,
+        setFullName,
       }}
     >
       {props.children}
